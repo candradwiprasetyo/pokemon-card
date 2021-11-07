@@ -1,11 +1,9 @@
 import Head from 'next/head'
-import Link from "next/link";
-import Layout, { siteTitle } from '../components/layout'
-import styles from '../styles/homepage.module.css'
+import Content from "./Content";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
-import classnames from 'classnames';
-import Image from 'next/image'
+import Layout, { siteTitle } from '../components/layout'
+import styles from '../styles/homepage.module.css'
 
 export default function Home({ listPokemon }) {
   return (
@@ -14,39 +12,13 @@ export default function Home({ listPokemon }) {
         <title>Pokemon Card</title>
       </Head>
       <section className={styles.container}>
-        <h1>Pokemon Card</h1>
+        <h1 className={styles.title}>Pokemon Card</h1>
         <div className="p-2">
-          <div className={styles.grid}>
-            {listPokemon.map((data) => (
-              <li className={styles['grid-item']} key={data.id}>
-                <Link href={`/pokemon/${data.name}`}>
-                  <a>
-                    <article className={classnames(styles['pokemon-box'], styles['bg-light'])}>
-                      <Image
-                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`  }
-                        height={144}
-                        width={144}
-                        alt={data.name}
-                      />
-                      <span>#{data.id}</span>
-                      <span>{data.name}</span>
-                      <figure className={styles['pokemon-box__types']}>
-                        <ul className={styles['pokemon-types']}>
-                          {data.pokemons[0].types.map((data_type) => (
-                            <li className={styles['pokemon-type']} key={data_type.type.name}>{data_type.type.name}</li>
-                          ))}
-                        </ul>
-                      </figure>
-                    </article>
-                  </a>
-                </Link>
-              </li>
-            ))}
-          </div>
+          <Content data={listPokemon} />
         </div>
       </section>
     </Layout>
-  )
+  );
 }
 
 export async function getStaticProps() {
