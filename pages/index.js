@@ -3,7 +3,7 @@ import Content from "./Content";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
 import Layout, { siteTitle } from '../components/layout'
-import styles from '../styles/homepage.module.css'
+import styles from '../styles/style.module.css'
 import Image from 'next/image'
 
 export default function Home({ listPokemon }) {
@@ -13,16 +13,18 @@ export default function Home({ listPokemon }) {
         <title>Pokemon Card</title>
       </Head>
       <section className="container">
-        <h1 className={styles.title}>
-          <Image
-            src={ `/favicon.png` }
-            height={40}
-            width={40}
-          />
-          <span>Pokemon Card</span>
-        </h1>
-        <div className="p-2">
-          <Content data={listPokemon} />
+        <div className="p-4">
+          <h1 className={styles.title}>
+            <Image
+              src={ `/favicon.png` }
+              height={40}
+              width={40}
+            />
+            <span>Pokemon Card</span>
+          </h1>
+          <div className="p-2">
+            <Content data={listPokemon} />
+          </div>
         </div>
       </section>
     </Layout>

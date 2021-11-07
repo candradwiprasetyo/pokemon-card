@@ -4,8 +4,34 @@ import Layout from '../../components/layout'
 import { gql } from "@apollo/client";
 import client from "../../apollo-client";
 import Image from 'next/image'
-import styles from '../../styles/detail.module.css'
+import styles from '../../styles/style.module.css'
 import classnames from 'classnames';
+
+const barStats = (value) => {
+  let result = value / 200 * 100;
+  return result;
+};
+
+const getHeight = (value) => {
+  value = value * 10;
+  let height = value / 100;
+  let inches = (value*0.393700787).toFixed(0);
+  let feet = Math.floor(inches / 12);
+  inches %= 12;
+  return feet + "'" + inches + '"' + ' (' + height + ' m)';
+};
+
+const getWeight = (value) => {
+  let kg = value / 10;
+  let lbs = (kg * 2.2046).toFixed(1);
+  return lbs + " lbs"  + ' (' + kg + ' kg)';
+};
+
+const getGender = (value) => {
+  let female = value / 8 * 100;
+  let male = (8 - value) / 8 * 100;
+  return '♂ ' + male + '%' + ' ♀ ' + female + '%';
+};
 
 export default function DetailPage({ detailPokemon }) {
   return (
@@ -14,97 +40,124 @@ export default function DetailPage({ detailPokemon }) {
         <title>{detailPokemon.name}</title>
       </Head>
 
-      <section>
-        <Link href="/">
-          <a>{'<'}</a>
-        </Link>
-
-        {detailPokemon.pokemons[0].types.map((data_type) => (
-          <div key={data_type.type.name}
-            className={classnames(
-            styles['detail-banner'], 
-            (data_type.type.name == 'ground') ? styles['bg-type-1'] : '',
-            (data_type.type.name == 'grass') ? styles['bg-type-2'] : '',
-            (data_type.type.name == 'poison') ? styles['bg-type-3'] : '',
-            (data_type.type.name == 'fire') ? styles['bg-type-4'] : '',
-            (data_type.type.name == 'water') ? styles['bg-type-5'] : '',
-            (data_type.type.name == 'flying') ? styles['bg-type-6'] : ''
-          )}>
-            <h1 className={styles['detail-title']}>{detailPokemon.name}</h1>
+      <section className="container">
+        <div 
+          className={classnames(
+          styles['detail-banner'],
+          (detailPokemon.pokemons[0].types[0].type.name == 'ground') ? styles['bg-type-1'] : '',
+          (detailPokemon.pokemons[0].types[0].type.name == 'grass') ? styles['bg-type-2'] : '',
+          (detailPokemon.pokemons[0].types[0].type.name == 'poison') ? styles['bg-type-3'] : '',
+          (detailPokemon.pokemons[0].types[0].type.name == 'fire') ? styles['bg-type-4'] : '',
+          (detailPokemon.pokemons[0].types[0].type.name == 'water') ? styles['bg-type-5'] : '',
+          (detailPokemon.pokemons[0].types[0].type.name == 'flying') ? styles['bg-type-6'] : ''
+        )}>
+          <div className={styles['detail-banner-background']}
+            style={{backgroundImage: "url(" + `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.id}.png` + ")"}}
+          />
+          <Link href="/">
+            <a>
+              <Image
+                src={`/images/back-button.png` }
+                height={24}
+                width={24}
+              />
+            </a>
+          </Link>
+          <div>
+            <div className={styles['detail-title']}>
+              <h1>{detailPokemon.name}</h1>
+            </div>
+            <div className={styles['detail-number']}>#{detailPokemon.id}</div>
           </div>
-        ))}
-      </section>
-  
-      <h1>{detailPokemon.name}</h1>
-      <div>
-        <div>{`#${detailPokemon.id}`}</div>
-        <ul>
-          {detailPokemon.pokemons[0].types.map((data_type) => (
-            <li key={data_type.type.name}>{data_type.type.name}</li>
-          ))}
-        </ul>
-        <Image
-          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.id}.png`  }
-          height={144}
-          width={144}
-          alt={detailPokemon.name}
-        />
-      </div>
+          <div>
+            <div className={styles['detail-pokemon-types']}>
+              {detailPokemon.pokemons[0].types.map((data_type) => (
+                <span className={styles['detail-pokemon-type']} key={data_type.type.name}>
+                  {data_type.type.name}
+                </span>
+              ))}
+            </div>
+          </div>
 
-      <div>
-        <h2>About</h2>
-        <div>{detailPokemon.description[0].flavor_text}</div>
-        <div>Height: {detailPokemon.pokemons[0].height}</div>
-        <div>Weight: {detailPokemon.pokemons[0].weight}</div>
-        <div>
-          Abilities: 
-          {detailPokemon.pokemons[0].abilities.map((ability) => (
-            <span key={ability.ability.name}>{ability.ability.name}, </span>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h2>Breeding</h2>
-        <div>Gender: {detailPokemon.gender_rate}</div>
-        <div>
-          Egg Group: 
-          {detailPokemon.egg_groups.map((egg_group) => (
-            <span key={egg_group.group.name}>{egg_group.group.name}, </span>
-          ))}
-        </div>
-        <div>Egg Cycles: {detailPokemon.hatch_counter}</div>
-      </div>
-
-      <div>
-        <h2>Base stats</h2>
-        
-        {detailPokemon.pokemons[0].stats.map((stat) => (
-          <div key={stat.stat.name}>{stat.stat.name} {stat.base_stat}, </div>
-        ))}
-     
-        <div>Egg Cycles: {detailPokemon.hatch_counter}</div>
-      </div>
-
-      <div>
-        <h2>Evolution</h2>
-        
-        {detailPokemon.evolutions.species.map((evolution) => (
-          <div key={evolution.id}>
-            <div > {evolution.name}, </div>
-            { evolution.evolutions.length>0 && <div>Level {evolution.evolutions[0].min_level}+</div> }
+          <div className={styles['detail-image']}>
             <Image
-              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evolution.id}.png`}
-              height={144}
-              width={144}
-              alt={evolution.name}
+              src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.id}.png`  }
+              height={200}
+              width={200}
+              alt={detailPokemon.name}
             />
           </div>
-        ))}
-     
-      </div>
+        </div>
 
+        <div className={styles['detail-content']}>
+          <h2 className={styles['detail-content-title']}>About</h2>
+          <div>{detailPokemon.description[0].flavor_text}</div>
+          <br />
+          <div className={styles['detail-list']}>
+            <div className={styles['detail-list-label']}>Height</div>
+            <div className={styles['detail-list-value']}>{getHeight(detailPokemon.pokemons[0].height)}</div>
+            <div className={styles['detail-list-label']}>Weight</div>
+            <div className={styles['detail-list-value']}>{getWeight(detailPokemon.pokemons[0].weight)}</div>
+            <div className={styles['detail-list-label']}>Abilities</div>
+            <div className={styles['detail-list-value']}>
+              {detailPokemon.pokemons[0].abilities.map((ability, index) => (
+                <span key={ability.ability.name}>{(index!=0) ? ', ' : ''}{ability.ability.name}</span>
+              ))}
+            </div>
+          </div>
 
+          <div>
+            <h2 className={styles['detail-content-title']}>Breeding</h2>
+            <div className={styles['detail-list']}>
+              <div className={styles['detail-list-label']}>Gender</div>
+              <div className={styles['detail-list-value']}>{getGender(detailPokemon.gender_rate)}</div>
+              <div className={styles['detail-list-label']}>Egg Group</div>
+              <div className={styles['detail-list-value']}>
+                {detailPokemon.egg_groups.map((egg_group, index) => (
+                  <span key={egg_group.group.name}>{(index!=0) ? ', ' : ''}{egg_group.group.name}</span>
+                ))}
+              </div>
+              <div className={styles['detail-list-label']}>Egg Cycles</div>
+              <div className={styles['detail-list-value']}>{detailPokemon.hatch_counter}</div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className={styles['detail-content-title']}>Base stats</h2>
+            {detailPokemon.pokemons[0].stats.map((stat) => (
+              <div key={stat.stat.name}>
+                <div  className={styles['detail-list']}>
+                  <div className={styles['detail-list-label']}>{stat.stat.name}</div>
+                  <div className={classnames(styles['detail-list-value'], "text-right")}>{stat.base_stat}</div>
+                  <div></div>
+                </div>
+                <div className={styles['detail-bar']}>
+                  <div className={styles['detail-bar-value']}
+                    style={{width: barStats(stat.base_stat) + '%' }}
+                  >
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <h2 className={styles['detail-content-title']}>Evolution</h2>
+            {detailPokemon.evolutions.species.map((evolution) => (
+              <div key={evolution.id}>
+                <div > {evolution.name}, </div>
+                { evolution.evolutions.length>0 && <div>Level {evolution.evolutions[0].min_level}+</div> }
+                <Image
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evolution.id}.png`}
+                  height={144}
+                  width={144}
+                  alt={evolution.name}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </Layout>
   )
 }

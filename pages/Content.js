@@ -3,7 +3,7 @@ import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
-import styles from '../styles/homepage.module.css'
+import styles from '../styles/style.module.css'
 import classnames from 'classnames';
 import Image from 'next/image'
 
