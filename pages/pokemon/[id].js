@@ -4,18 +4,37 @@ import Layout from '../../components/layout'
 import { gql } from "@apollo/client";
 import client from "../../apollo-client";
 import Image from 'next/image'
+import styles from '../../styles/detail.module.css'
+import classnames from 'classnames';
 
-export default function FirstPost({ detailPokemon }) {
+export default function DetailPage({ detailPokemon }) {
   return (
     <Layout>
     	<Head>
         <title>{detailPokemon.name}</title>
       </Head>
 
-      <Link href="/">
-        <a>Back to home</a>
-      </Link>
-      
+      <section>
+        <Link href="/">
+          <a>{'<'}</a>
+        </Link>
+
+        {detailPokemon.pokemons[0].types.map((data_type) => (
+          <div key={data_type.type.name}
+            className={classnames(
+            styles['detail-banner'], 
+            (data_type.type.name == 'ground') ? styles['bg-type-1'] : '',
+            (data_type.type.name == 'grass') ? styles['bg-type-2'] : '',
+            (data_type.type.name == 'poison') ? styles['bg-type-3'] : '',
+            (data_type.type.name == 'fire') ? styles['bg-type-4'] : '',
+            (data_type.type.name == 'water') ? styles['bg-type-5'] : '',
+            (data_type.type.name == 'flying') ? styles['bg-type-6'] : ''
+          )}>
+            <h1 className={styles['detail-title']}>{detailPokemon.name}</h1>
+          </div>
+        ))}
+      </section>
+  
       <h1>{detailPokemon.name}</h1>
       <div>
         <div>{`#${detailPokemon.id}`}</div>
@@ -71,8 +90,8 @@ export default function FirstPost({ detailPokemon }) {
         <h2>Evolution</h2>
         
         {detailPokemon.evolutions.species.map((evolution) => (
-          <div>
-            <div key={evolution.id}> {evolution.name}, </div>
+          <div key={evolution.id}>
+            <div > {evolution.name}, </div>
             { evolution.evolutions.length>0 && <div>Level {evolution.evolutions[0].min_level}+</div> }
             <Image
               src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evolution.id}.png`}

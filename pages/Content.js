@@ -57,22 +57,39 @@ const Content = ({ data }) => {
             <li className={styles['grid-item']} key={data.id}>
               <Link href={`/pokemon/${data.name}`}>
                 <a>
-                  <article className={classnames(styles['pokemon-box'], styles['bg-light'])}>
-                    <Image
-                      src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`  }
-                      height={144}
-                      width={144}
-                      alt={data.name}
+                  <article className={classnames(
+                    styles['pokemon-box'], 
+                    (data.pokemons[0].types[0].type.name == 'ground') ? styles['bg-type-1'] : '',
+                    (data.pokemons[0].types[0].type.name == 'grass') ? styles['bg-type-2'] : '',
+                    (data.pokemons[0].types[0].type.name == 'poison') ? styles['bg-type-3'] : '',
+                    (data.pokemons[0].types[0].type.name == 'fire') ? styles['bg-type-4'] : '',
+                    (data.pokemons[0].types[0].type.name == 'water') ? styles['bg-type-5'] : '',
+                    (data.pokemons[0].types[0].type.name == 'flying') ? styles['bg-type-6'] : ''
+                  )}>
+                    <div className={styles['pokemon-box-background']}
+                      style={{backgroundImage: "url(" + `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png` + ")"}}
                     />
-                    <span>#{data.id}</span>
-                    <span>{data.name}</span>
+                    <div className={styles['pokemon-box-title']}>{data.name}</div>
+                    <div className={styles['pokemon-box-number']}>#{data.id}</div>
                     <figure className={styles['pokemon-box__types']}>
                       <ul className={styles['pokemon-types']}>
                         {data.pokemons[0].types.map((data_type) => (
-                          <li className={styles['pokemon-type']} key={data_type.type.name}>{data_type.type.name}</li>
+                          <li className={styles['pokemon-type']} key={data_type.type.name}>
+                            <div className={styles['pokemon-type-background']} />
+                            {data_type.type.name}
+                          </li>
                         ))}
                       </ul>
                     </figure>
+                    <div className={styles['pokemon-box-frame']}>
+                      <Image
+                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data.id}.png`  }
+                        height={144}
+                        width={144}
+                        alt={data.name}
+                        className={styles['pokemon-box-img']}
+                      />
+                    </div>
                   </article>
                 </a>
               </Link>
