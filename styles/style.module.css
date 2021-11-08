@@ -185,6 +185,10 @@
   color: #DDE2EB;
 }
 
+.header-default {
+  background-color: #ca8179;
+}
+
 .bg-type-1 {
   background-color: #fc6c6d;
 }
@@ -277,6 +281,8 @@
 .detail-list-value-yellow {
   color: #d8d87b;
 }
+
+
 
 .header-sticky-title {
   display: inline-block;

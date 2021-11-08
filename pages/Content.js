@@ -97,16 +97,6 @@ const Content = ({ data }) => {
           ))}
         </ul>
       </InfiniteScroll>
-      <style jsx>
-        {`
-          .back {
-            padding: 10px;
-            background-color: dodgerblue;
-            color: white;
-            margin: 10px;
-          }
-        `}
-      </style>
     </>
   );
 };

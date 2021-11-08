@@ -61,16 +61,17 @@ export default function DetailPage({ detailPokemon }) {
     	<Head>
         <title>{detailPokemon.name}</title>
       </Head>
-      
+
       <div id="header"
         className={classnames(
-        styles['header'],
+        "header",
         (detailPokemon.pokemons[0].types[0].type.name == 'ground') ? styles['bg-type-1'] : '',
         (detailPokemon.pokemons[0].types[0].type.name == 'grass') ? styles['bg-type-2'] : '',
         (detailPokemon.pokemons[0].types[0].type.name == 'poison') ? styles['bg-type-3'] : '',
         (detailPokemon.pokemons[0].types[0].type.name == 'fire') ? styles['bg-type-4'] : '',
         (detailPokemon.pokemons[0].types[0].type.name == 'water') ? styles['bg-type-5'] : '',
-        (detailPokemon.pokemons[0].types[0].type.name == 'flying') ? styles['bg-type-6'] : ''
+        (detailPokemon.pokemons[0].types[0].type.name == 'flying') ? styles['bg-type-6'] : '',
+        styles['header-default']
       )}>
         <Link href="/">
           <a>
