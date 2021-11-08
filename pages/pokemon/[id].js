@@ -6,6 +6,7 @@ import client from "../../apollo-client";
 import Image from 'next/image'
 import styles from '../../styles/style.module.css'
 import classnames from 'classnames';
+import React, { useEffect } from 'react'
 
 const barStats = (value) => {
   let result = value / 200 * 100;
@@ -33,14 +34,58 @@ const getGender = (value) => {
   return '♂ ' + male + '%' + ' ♀ ' + female + '%';
 };
 
+
 export default function DetailPage({ detailPokemon }) {
+
+  const [scrolled, setScrolled] = React.useState(false);
+
+  const handleScroll = () => {
+    const offset = window.scrollY;
+
+    if (offset > 250) {
+        setScrolled(true);
+        document.getElementById('header').classList.add('sticky')
+    }
+    else {
+        setScrolled(false);
+        document.getElementById('header').classList.remove('sticky')
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+  }, [])
+
   return (
     <Layout>
     	<Head>
         <title>{detailPokemon.name}</title>
       </Head>
+      
+      <div id="header"
+        className={classnames(
+        styles['header'],
+        (detailPokemon.pokemons[0].types[0].type.name == 'ground') ? styles['bg-type-1'] : '',
+        (detailPokemon.pokemons[0].types[0].type.name == 'grass') ? styles['bg-type-2'] : '',
+        (detailPokemon.pokemons[0].types[0].type.name == 'poison') ? styles['bg-type-3'] : '',
+        (detailPokemon.pokemons[0].types[0].type.name == 'fire') ? styles['bg-type-4'] : '',
+        (detailPokemon.pokemons[0].types[0].type.name == 'water') ? styles['bg-type-5'] : '',
+        (detailPokemon.pokemons[0].types[0].type.name == 'flying') ? styles['bg-type-6'] : ''
+      )}>
+        <Link href="/">
+          <a>
+            <Image
+              src={`/images/back-button.png` }
+              height={24}
+              width={24}
+            />
+          </a>
+        </Link>
+        <div className={styles['header-sticky-title']}>{detailPokemon.name}</div>
+      </div>
 
       <section className="container">
+
         <div 
           className={classnames(
           styles['detail-banner'],
@@ -128,7 +173,7 @@ export default function DetailPage({ detailPokemon }) {
               <div key={stat.stat.name}>
                 <div  className={styles['detail-list']}>
                   <div className={styles['detail-list-label']}>{stat.stat.name}</div>
-                  <div className={classnames(styles['detail-list-value'], "text-right")}>{stat.base_stat}</div>
+                  <div className={classnames(styles['detail-list-value'], "text-right", styles['detail-list-value-yellow'])}>{stat.base_stat}</div>
                   <div></div>
                 </div>
                 <div className={styles['detail-bar']}>
@@ -140,21 +185,73 @@ export default function DetailPage({ detailPokemon }) {
               </div>
             ))}
           </div>
-
-          <div>
+          <div className="mt-30">
             <h2 className={styles['detail-content-title']}>Evolution</h2>
-            {detailPokemon.evolutions.species.map((evolution) => (
-              <div key={evolution.id}>
-                <div > {evolution.name}, </div>
-                { evolution.evolutions.length>0 && <div>Level {evolution.evolutions[0].min_level}+</div> }
+            <div className={styles['evolution']}>
+              <div className={classnames(styles['evolution-item'], 
+                (detailPokemon.id == detailPokemon.evolutions.species[0].id) ? styles['evolution-item-active'] : ''
+              )}>
                 <Image
-                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evolution.id}.png`}
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.evolutions.species[0].id}.png`}
                   height={144}
                   width={144}
-                  alt={evolution.name}
+                  alt={detailPokemon.evolutions.species[0].name}
                 />
+                <div className={styles['evolution-name']}> {detailPokemon.evolutions.species[0].name} </div>
+                { detailPokemon.evolutions.species.length > 1 && <div className={styles['evolution-level']}>Level {detailPokemon.evolutions.species[1].evolutions[0].min_level}+</div> }
               </div>
-            ))}
+              { detailPokemon.evolutions.species.length > 1 && <div className={styles['evolution-arrow']}>
+                <Image
+                  src={`/images/evolution.png` }
+                  height={24}
+                  width={24}
+                />
+              </div> }
+              { detailPokemon.evolutions.species.length > 1 && <div className={classnames(styles['evolution-item'],
+                (detailPokemon.id == detailPokemon.evolutions.species[1].id) ? styles['evolution-item-active'] : ''
+              )}>
+                <Image
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.evolutions.species[1].id}.png`}
+                  height={144}
+                  width={144}
+                  alt={detailPokemon.evolutions.species[1].name}
+                />
+                <div className={styles['evolution-name']}> {detailPokemon.evolutions.species[1].name} </div>
+              </div> }
+            </div>
+
+            <div className={styles['evolution']}>
+              { detailPokemon.evolutions.species.length > 2 && <div className={classnames(styles['evolution-item'],
+                (detailPokemon.id == detailPokemon.evolutions.species[1].id) ? styles['evolution-item-active'] : ''
+              )}>
+                <Image
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.evolutions.species[1].id}.png`}
+                  height={144}
+                  width={144}
+                  alt={detailPokemon.evolutions.species[1].name}
+                />
+                <div className={styles['evolution-name']}> {detailPokemon.evolutions.species[1].name} </div>
+                { detailPokemon.evolutions.species.length > 2 && <div className={styles['evolution-level']}>Level {detailPokemon.evolutions.species[2].evolutions[0].min_level}+</div> }
+              </div> }
+              { detailPokemon.evolutions.species.length > 2 && <div className={styles['evolution-arrow']}>
+                <Image
+                  src={`/images/evolution.png` }
+                  height={24}
+                  width={24}
+                />
+              </div> }
+              { detailPokemon.evolutions.species.length > 2 && <div className={classnames(styles['evolution-item'],
+                (detailPokemon.id == detailPokemon.evolutions.species[2].id) ? styles['evolution-item-active'] : ''
+              )}>
+                <Image
+                  src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${detailPokemon.evolutions.species[2].id}.png`}
+                  height={144}
+                  width={144}
+                  alt={detailPokemon.evolutions.species[2].name}
+                />
+                <div className={styles['evolution-name']}> {detailPokemon.evolutions.species[2].name} </div>
+              </div> }
+            </div>
           </div>
         </div>
       </section>

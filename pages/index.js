@@ -12,6 +12,7 @@ export default function Home({ listPokemon }) {
       <Head>
         <title>Pokemon Card</title>
       </Head>
+      <div id="header"></div>
       <section className="container">
         <div className="p-4">
           <h1 className={styles.title}>
