@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Content from "./Content";
+import Content from "../components/content";
 import { gql } from "@apollo/client";
 import client from "../apollo-client";
 import Layout, { siteTitle } from '../components/layout'
